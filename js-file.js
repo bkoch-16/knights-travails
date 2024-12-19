@@ -7,9 +7,9 @@ function knightMoves(start, end) {
   ) {
     if (start[0] === end[0] && start[1] === end[1]) {
       console.log("YES");
-      return 1;
+      return;
     }
-    const moveSum = [
+    const moveOptions = [
       [-2, -1],
       [-2, 1],
       [-1, -2],
@@ -20,29 +20,61 @@ function knightMoves(start, end) {
       [2, 1],
     ];
 
-    const queue = new Queue();
-    queue.enqueue(start);
+    const traversalQueue = new Queue();
+    traversalQueue.enqueue(start);
+    const adjacencyList = {};
+    while (traversalQueue.size() > 0) {
+      const currentNode = traversalQueue.dequeue();
 
-    while (queue.size() > 0) {
-      for (let i = 0; i < moveSum.length; i++) {
+      for (let i = 0; i < moveOptions.length; i++) {
         const potentialMove = [
-          queue.front()[0] + moveSum[i][0],
-          queue.front(1) + moveSum[i][1],
+          currentNode[0] + moveOptions[i][0],
+          currentNode[1] + moveOptions[i][1],
         ];
-        if (potentialMove[0] >= 0 && potentialMove[1] >= 0) {
-          queue.enqueue(potentialMove);
+        if (
+          potentialMove[0] >= 0 &&
+          potentialMove[0] <= 7 &&
+          potentialMove[1] >= 0 &&
+          potentialMove[1] <= 7
+        ) {
+          traversalQueue.enqueue(potentialMove);
+          if (adjacencyList[currentNode]) {
+            let alreadyStored = false;
+            for (let i = 0; i < adjacencyList[currentNode].length; i++) {
+              if (
+                adjacencyList[currentNode][i][0] === potentialMove[0] &&
+                adjacencyList[currentNode][i][1] === potentialMove[1]
+              ) {
+                alreadyStored = true;
+                break;
+              }
+            }
+            if (alreadyStored === false) {
+              adjacencyList[currentNode].push(potentialMove);
+            }
+          } else {
+            adjacencyList[currentNode] = [potentialMove];
+          }
+          if (currentNode[0] === end[0] && currentNode[1] === end[1]) {
+            console.log(adjacencyList);
+            console.log("Output:");
+            let activeNode = [...currentNode];
+            let output = [activeNode];
+            while (activeNode[0] !== start[0] && activeNode[1] !== start[1]) {
+              activeNode = [...adjacencyList[activeNode][0]];
+              output.unshift(activeNode);
+            }
+            console.log(output);
+            //console.log(currentNode);
+            //console.log(adjacencyList[currentNode][0]);
+            //console.log(adjacencyList[adjacencyList[currentNode][0]][0]);
+            return;
+          }
         }
-      }
-
-      if (
-        queue.front()[0] + moveSum[0][0] >= 0 &&
-        queue.front(1) + moveSum[0][1] >= 0
-      ) {
       }
     }
   }
 }
-
 class Queue {
   constructor() {
     this.items = [];
