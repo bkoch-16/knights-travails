@@ -22,14 +22,15 @@ function knightMoves(start, end) {
 
     const traversalQueue = new Queue();
     traversalQueue.enqueue(start);
-    const adjacencyList = {};
+    const adjacencyList = {}; //add distance paramtter
     while (traversalQueue.size() > 0) {
       const currentNode = traversalQueue.dequeue();
-
+      console.log(currentNode)
       for (let i = 0; i < moveOptions.length; i++) {
         const potentialMove = [
           currentNode[0] + moveOptions[i][0],
           currentNode[1] + moveOptions[i][1],
+          [currentNode]
         ];
         if (
           potentialMove[0] >= 0 &&
@@ -55,26 +56,18 @@ function knightMoves(start, end) {
           } else {
             adjacencyList[currentNode] = [potentialMove];
           }
-          if (currentNode[0] === end[0] && currentNode[1] === end[1]) {
-            console.log(adjacencyList);
-            console.log("Output:");
-            let activeNode = [...currentNode];
-            let output = [activeNode];
-            while (activeNode[0] !== start[0] && activeNode[1] !== start[1]) {
-              activeNode = [...adjacencyList[activeNode][0]];
-              output.unshift(activeNode);
-            }
-            console.log(output);
-            //console.log(currentNode);
-            //console.log(adjacencyList[currentNode][0]);
-            //console.log(adjacencyList[adjacencyList[currentNode][0]][0]);
-            return;
-          }
+
         }
+      }
+      if (currentNode[0] === end[0] && currentNode[1] === end[1]) {
+        console.log(adjacencyList);
+        console.log("Output:");
+        return;
       }
     }
   }
 }
+
 class Queue {
   constructor() {
     this.items = [];
