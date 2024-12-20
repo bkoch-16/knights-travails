@@ -6,7 +6,9 @@ function knightMoves(start, end) {
     typeof end[1] === "number"
   ) {
     if (start[0] === end[0] && start[1] === end[1]) {
-      console.log("YES");
+      console.log(
+        "You made it in 0 moves! Your start position is the same as your target position!"
+      );
       return;
     }
     const moveOptions = [
@@ -23,85 +25,81 @@ function knightMoves(start, end) {
     const traversalQueue = new Queue();
     traversalQueue.enqueue(start);
     const adjacencyList = {};
-    const visitedTile = {}
+    const visitedTile = {};
 
     while (traversalQueue.size() > 0) {
-      console.log("queue: " + traversalQueue.printQueue())
       const currentNode = traversalQueue.dequeue();
       if (hasBeenVisited(currentNode, visitedTile)) {
-        continue
+        continue;
       }
 
-      let previousLocation = findPreviousLocation(currentNode)
+      let previousLocation = findPreviousLocation(currentNode);
 
-      console.log("active node: " + currentNode)
-      console.log("previous location: " + previousLocation)
       if (!adjacencyList[currentNode]) {
-        adjacencyList[currentNode] = [previousLocation]
-      }
-      else {
-        adjacencyList[currentNode].push(potentialMove)
+        adjacencyList[currentNode] = [previousLocation];
+      } else {
+        adjacencyList[currentNode].push(potentialMove);
       }
 
       if (currentNode[0] === end[0] && currentNode[1] === end[1]) {
-        console.log(adjacencyList);
-        console.log("Output: " + currentNode);
-        const outputArray = createFinalPath(adjacencyList, start, end)
-        console.log(`You made it in ${outputArray.length} moves! Here is your path:`)
-        for (let i = outputArray.length -1; i >= 0; i--) {
-          console.log(outputArray[i].toString())
+        const outputArray = createFinalPath(adjacencyList, start, end);
+        console.log(
+          `You made it in ${outputArray.length - 1} moves! Here is your path:`
+        );
+        for (let i = outputArray.length - 1; i >= 0; i--) {
+          console.log(outputArray[i].toString());
         }
         return;
       }
-     
 
       for (let i = 0; i < moveOptions.length; i++) {
-        previousLocation = findPreviousLocation(currentNode)
+        previousLocation = findPreviousLocation(currentNode);
         const potentialMove = [
           currentNode[0] + moveOptions[i][0],
           currentNode[1] + moveOptions[i][1],
-          previousLocation
+          previousLocation,
         ];
 
-        if (isInBounds(potentialMove) && !hasBeenVisited(currentNode, visitedTile)) {
-          console.log("QUEUE: " + potentialMove)
+        if (
+          isInBounds(potentialMove) &&
+          !hasBeenVisited(currentNode, visitedTile)
+        ) {
           traversalQueue.enqueue(potentialMove);
         }
       }
-      visitedTile[currentNode.slice(0,2)] = true
-      console.log("complete: " + currentNode)
-      console.log(adjacencyList)
-
+      visitedTile[currentNode.slice(0, 2)] = true;
     }
   }
 }
 
 function createFinalPath(adjacencyList, start, end) {
-  const finalPath = [end]
-  let activeKey = [...end]
-
-  while (adjacencyList[activeKey][0][0] !== start[0] && adjacencyList[activeKey][0][1] !== start[1]) {
-    activeKey = finalPath[finalPath.length - 1]
-    finalPath.push(adjacencyList[activeKey][0])
+  const finalPath = [end];
+  let activeKey = [...end];
+  while (
+    !(
+      adjacencyList[activeKey][0][0] === start[0] &&
+      adjacencyList[activeKey][0][1] === start[1]
+    )
+  ) {
+    activeKey = finalPath[finalPath.length - 1];
+    finalPath.push(adjacencyList[activeKey][0]);
   }
 
-  return finalPath
+  return finalPath;
 }
 
 function findPreviousLocation(currentNode) {
-  let previousLocation
+  let previousLocation;
   if (currentNode.length > 2) {
-    previousLocation = currentNode.pop()
-
+    previousLocation = currentNode.pop();
   } else {
-    previousLocation = [...currentNode]
+    previousLocation = [...currentNode];
   }
-  return previousLocation
+  return previousLocation;
 }
 function hasBeenVisited(currentNode, visitedTile) {
-  return visitedTile[currentNode.slice(0,2)]
+  return visitedTile[currentNode.slice(0, 2)];
 }
-
 
 function isInBounds(position) {
   if (
@@ -110,9 +108,8 @@ function isInBounds(position) {
     position[1] >= 0 &&
     position[1] <= 7
   ) {
-    return true
-  }
-  else return false
+    return true;
+  } else return false;
 }
 
 function isAlreadyStored(adjacencyList, currentNode, potentialMove) {
@@ -121,10 +118,10 @@ function isAlreadyStored(adjacencyList, currentNode, potentialMove) {
       adjacencyList[currentNode][i][0] === potentialMove[0] &&
       adjacencyList[currentNode][i][1] === potentialMove[1]
     ) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 class Queue {
